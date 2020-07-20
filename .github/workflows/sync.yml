@@ -1,0 +1,35 @@
+name: Sync Starter
+on: [push]
+#on:
+#  schedule:
+#    - cron: "* * * * *"
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      name: Checkout files
+    - name: Week Number
+      id: week-number
+      run: "echo \"::set-output name=week::$(date +%U)\""
+    - name: Year Number
+      id: year-number
+      run: "echo \"::set-output name=year::$(date +%Y)\""
+    - name: Retrieve Upstream
+      run: git clone --depth 1 https://github.com/magento/magento2.git $GITHUB_WORKSPACE/../magento2
+    - name: Update code
+      run: |
+        cd $GITHUB_WORKSPACE
+        find . | grep -v ".git" | grep -v "^\.*$" | xargs rm -rf
+        cp -r $GITHUB_WORKSPACE/../magento2/app/code/Magento/ReviewGraphQl/. .
+    - name: Push Changes
+      run: |
+              git config --global user.name ${{ github.repository_owner }}
+              git config --global user.email ${{ github.repository_owner }}'@users.noreply.github.com'
+              if [ -n "$(git status --porcelain)" ]; then
+                git add .
+                git commit --message "Updated from upstream"
+                git push origin main
+              fi
