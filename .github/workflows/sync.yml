@@ -23,7 +23,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         find . | grep -v ".git" | grep -v "^\.*$" | xargs rm -rf
-        cp -r $GITHUB_WORKSPACE/../magento2/app/code/Magento/ReviewGraphQl/. .
+        cp -r $GITHUB_WORKSPACE/../magento2/app/code/Magento/SalesGraphQl/. .
     - name: Push Changes
       run: |
               git config --global user.name ${{ github.repository_owner }}
